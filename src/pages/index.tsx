@@ -1,5 +1,6 @@
 import { Card, CardContent, TextField, Typography } from "@material-ui/core";
 import { Field, Form, Formik, FormikConfig, FormikValues } from "formik";
+import React, { useState } from "react";
 import * as Yup from "yup";
 
 export default function Home() {
@@ -34,59 +35,57 @@ export default function Home() {
           }}
           onSubmit={() => {}}
         >
-          <Form autoComplete="off">
-            <div>
-              <h2>Crea tu Password Manager</h2>
-              <h4>Cómo Funciona</h4>
-              <p>
-                En primer lugar debes crear una contraseña diferente para sus
-                pertenencias electrónicas. No pdrás recuperar tu contraseña, así
-                que recuérdala bien.
-              </p>
-              <h4>Qué datos puede guardar</h4>
-              <p>
-                Por ejemplo, el número de tu tarjeta, el PIN y el PUK de tu
-                teléfono móvil, el número de seria de uno de tus dispositivos o
-                cualquier información que necesites tener en un lugar seguro.
-              </p>
-            </div>
+          <div>
+            <h2>Crea tu Password Manager</h2>
+            <h4>Cómo Funciona</h4>
+            <p>
+              En primer lugar debes crear una contraseña diferente para sus
+              pertenencias electrónicas. No pdrás recuperar tu contraseña, así
+              que recuérdala bien.
+            </p>
+            <h4>Qué datos puede guardar</h4>
+            <p>
+              Por ejemplo, el número de tu tarjeta, el PIN y el PUK de tu
+              teléfono móvil, el número de seria de uno de tus dispositivos o
+              cualquier información que necesites tener en un lugar seguro.
+            </p>
+          </div>
 
-            <div>
-              <h2>Crea tu Password Manager</h2>
-              <p>
-                En primer lugar, debes crear una contraseña diferente para sus
-                pertenencias electronicas. No podrás recuperar tu contraseña,
-                así que recuerdala bien.
-              </p>
-              <Field
-                name="password"
-                type="password"
-                component={TextField}
-                label="Crea tu Contraseña"
-              />
-              <Field
-                name="repassword"
-                type="password"
-                component={TextField}
-                label="Repita su Contraseña"
-              />
+          <div>
+            <h2>Crea tu Password Manager</h2>
+            <p>
+              En primer lugar, debes crear una contraseña diferente para sus
+              pertenencias electronicas. No podrás recuperar tu contraseña, así
+              que recuerdala bien.
+            </p>
+            <Field
+              name="password"
+              type="password"
+              component={TextField}
+              label="Crea tu Contraseña"
+            />
+            <Field
+              name="repassword"
+              type="password"
+              component={TextField}
+              label="Repita su Contraseña"
+            />
 
-              <p>
-                También puedes crear una pista que te ayude a recordar tu
-                contraseña.
-              </p>
-              <Field
-                name="comments"
-                type="text"
-                component={TextField}
-                label="Crea tu pista (opcional)"
-              />
-            </div>
+            <p>
+              También puedes crear una pista que te ayude a recordar tu
+              contraseña.
+            </p>
+            <Field
+              name="comments"
+              type="text"
+              component={TextField}
+              label="Crea tu pista (opcional)"
+            />
+          </div>
 
-            <div>
-              <h2>Tu Contraseña ha sido creada satisfactoriamente!</h2>
-            </div>
-          </Form>
+          <div>
+            <h2>Tu Contraseña ha sido creada satisfactoriamente!</h2>
+          </div>
         </FormikStepper>
       </CardContent>
     </Card>
@@ -97,9 +96,33 @@ export function FormikStepper({
   children,
   ...props
 }: FormikConfig<FormikValues>) {
+  const childrenArray = React.Children.toArray(children);
+  const [step, setStep] = useState(0);
+  const currentChild = childrenArray[step];
+
+  function isLastStep() {
+    return step === childrenArray.length - 1;
+  }
+
   return (
-    <Formik {...props}>
-      <Form autoComplete="off">{children}</Form>
+    <Formik
+      {...props}
+      onSubmit={async (values, helpers) => {
+        if (isLastStep()) {
+          await props.onSubmit(values, helpers);
+        } else {
+          setStep((s) => s + 1);
+        }
+      }}
+    >
+      <Form autoComplete="off">
+        {currentChild}
+
+        {step > 0 ? (
+          <button onClick={() => setStep((s) => s - 1)}>Volver</button>
+        ) : null}
+        <button type="submit">{isLastStep() ? "Submit" : "Siguiente"}</button>
+      </Form>
     </Formik>
   );
 }
