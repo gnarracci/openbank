@@ -1,12 +1,12 @@
 import { Card, CardContent, TextField, Typography } from "@material-ui/core";
-import { Field, Form, Formik, ErrorMessage } from "formik";
+import { Field, Form, Formik, FormikConfig, FormikValues } from "formik";
 import * as Yup from "yup";
 
 export default function Home() {
   return (
     <Card>
       <CardContent>
-        <Formik
+        <FormikStepper
           validationSchema={Yup.object().shape({
             password: Yup.string()
               .max(25, "Máximo 25 caracteres")
@@ -71,10 +71,10 @@ export default function Home() {
                 label="Repita su Contraseña"
               />
 
-              <Typography variant="p">
+              <p>
                 También puedes crear una pista que te ayude a recordar tu
                 contraseña.
-              </Typography>
+              </p>
               <Field
                 name="comments"
                 type="text"
@@ -87,8 +87,19 @@ export default function Home() {
               <h2>Tu Contraseña ha sido creada satisfactoriamente!</h2>
             </div>
           </Form>
-        </Formik>
+        </FormikStepper>
       </CardContent>
     </Card>
+  );
+}
+
+export function FormikStepper({
+  children,
+  ...props
+}: FormikConfig<FormikValues>) {
+  return (
+    <Formik {...props}>
+      <Form autoComplete="off">{children}</Form>
+    </Formik>
   );
 }
