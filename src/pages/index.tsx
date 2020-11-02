@@ -1,5 +1,6 @@
 import { Card, CardContent, TextField, Typography } from "@material-ui/core";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 export default function Home() {
   return (
@@ -27,21 +28,43 @@ export default function Home() {
         </Typography>
 
         <Formik
+          validationSchema={Yup.object().shape({
+            password: Yup.string()
+              .max(25, "Máximo 25 caracteres")
+              .min(8, "Mínimo 8 caracteres")
+              .required("No ha ingresado Contraseña")
+              .matches(
+                /^[^A-Z]*[A-Z][^A-Z][0-9]*$/,
+                "La Contraseña debe contener al menos un número y una Mayúscula."
+              ),
+            repassword: Yup.string()
+              .max(25, "Máximo 25 caracteres")
+              .min(8, "Mínimo 8 caracteres")
+              .oneOf(
+                [Yup.ref("password"), null],
+                "Las Contraseñas deben coincidir"
+              )
+              .required("Debe repetir la Contraseña")
+              .matches(/[a-zA-Z]/, "La Contraseña solo debe contener letras."),
+            comments: Yup.string().max(255, "Máximo 255 caracteres"),
+          })}
           initialValues={{
             password: "",
             repassword: "",
-            comment: "",
+            comments: "",
           }}
           onSubmit={() => {}}
         >
-          <Form autoComplet="off">
+          <Form autoComplete="off">
             <Field
               name="password"
+              type="password"
               component={TextField}
               label="Crea tu Contraseña"
             />
             <Field
-              name="repass"
+              name="repassword"
+              type="password"
               component={TextField}
               label="Repita su Contraseña"
             />
@@ -51,7 +74,8 @@ export default function Home() {
               contraseña.
             </Typography>
             <Field
-              name="comment"
+              name="comments"
+              type="text"
               component={TextField}
               label="Crea tu pista (opcional)"
             />
