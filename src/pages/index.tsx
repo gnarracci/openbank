@@ -22,11 +22,9 @@ export default function Home() {
       <CardContent>
         <FormikStepper
           initialValues={{
-            firstName: "",
-            lastName: "",
-            millionaire: false,
-            money: 0,
-            description: "",
+            password: "",
+            repassword: "",
+            comment: "",
           }}
           onSubmit={async (values) => {
             await sleep(3000);
@@ -55,18 +53,7 @@ export default function Home() {
           </FormikStep>
           <FormikStep
             label="Crea tu Contraseña Maestra"
-            validationSchema={object({
-              money: mixed().when("millionaire", {
-                is: true,
-                then: number()
-                  .required()
-                  .min(
-                    1_000_000,
-                    "Because you said you are a millionaire you need to have 1 million"
-                  ),
-                otherwise: number().required(),
-              }),
-            })}
+            validationSchema={object({})}
           >
             <p>
               En primer lugar, debes crear una contraseña diferente para sus
