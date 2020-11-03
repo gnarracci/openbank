@@ -10,9 +10,10 @@ import {
   Stepper,
 } from "@material-ui/core";
 import { Field, Form, Formik, FormikConfig, FormikValues } from "formik";
-import { CheckboxWithLabel, TextField } from "formik-material-ui";
+import { TextField } from "formik-material-ui";
 import React, { useState } from "react";
-import { mixed, number, object } from "yup";
+import { string, object, ref } from "yup";
+import Swal from "sweetalert2";
 
 const sleep = (time) => new Promise((acc) => setTimeout(acc, time));
 
@@ -53,11 +54,22 @@ export default function Home() {
           </FormikStep>
           <FormikStep
             label="Crea tu Contraseña Maestra"
-            validationSchema={object({})}
+            validationSchema={object({
+              password: string()
+                .min(8, "Mínimo 8 caracteres")
+                .max(25, "Máximo 25 caracteres")
+                .required("Contraseña Requerida"),
+              repassword: string()
+                .min(8, "Mínimo 8 caracteres")
+                .max(25, "Máximo 25 caracteres")
+                .required("Repita la Contraseña Ingresada")
+                .oneOf([ref("password"), "Las Contraseñas no coinciden"]),
+              comment: string().max(255, "Máximo 255 caracteres"),
+            })}
           >
             <p>
               En primer lugar, debes crear una contraseña diferente para sus
-              pertenencias electronicas. No podrás recuperar tu contraseña, así
+              pertenencias electrónicas. No podrás recuperar tu contraseña, así
               que recuerdala bien.
             </p>
 
